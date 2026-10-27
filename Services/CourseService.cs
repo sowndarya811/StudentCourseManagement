@@ -1,41 +1,124 @@
 ﻿using StudentCourseManagement.Models;
-using StudentCourseManagement.Repository;
+using StudentCourseManagement.Repositories;
 
 namespace StudentCourseManagement.Services;
 
 public class CourseService
 {
-    private readonly CourseRepository _repository;
+    private readonly CourseRepository repository;
 
     public CourseService(CourseRepository repository)
     {
-        _repository = repository;
+        this.repository = repository;
     }
 
-    public async Task AddCourseAsync(Course course)
+    public async Task AddAsync(
+        string name,
+        int durationMonths,
+        decimal fee,
+        int departmentId)
     {
-        if (string.IsNullOrWhiteSpace(course.CourseName))
-            throw new ArgumentException("Course name is required.");
+        ValidateCourse(
+            name,
+            durationMonths,
+            fee,
+            departmentId);
 
-        if (course.DurationMonths <= 0)
-            throw new ArgumentException("Duration must be greater than zero.");
+        var course = new Course
+        {
+            CourseName = name.Trim(),
+            DurationMonths = durationMonths,
+            Fee = fee,
+            DepartmentId = departmentId,
+            IsActive = true
+        };
 
-        if (course.Fee < 0)
-            throw new ArgumentException("Course fee cannot be negative.");
-
-        await _repository.AddCourseAsync(course);
+        await repository.AddAsync(course);
     }
 
-    public Task<List<Course>> GetAllCoursesAsync()
+    public Task<List<Course>> GetAllAsync()
     {
-        return _repository.GetAllCoursesAsync();
+        return repository.GetAllAsync();
     }
 
-    public async Task<Course?> GetCourseByIdAsync(int id)
+    public async Task<Course?> GetByIdAsync(int id)
     {
         if (id <= 0)
-            throw new ArgumentException("Course ID must be greater than zero.");
+            throw new ArgumentException(
+                "Invalid course ID.");
 
-        return await _repository.GetCourseByIdAsync(id);
+        return await repository.GetByIdAsync(id);
+    }
+
+    public async Task<List<Course>> SearchByNameAsync(
+        string name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ArgumentException(
+                "Course name is required.");
+
+        return await repository.SearchByNameAsync(
+            name.Trim());
+    }
+
+    public async Task UpdateAsync(
+        int id,
+        string name,
+        int durationMonths,
+        decimal fee,
+        int departmentId)
+    {
+        ValidateCourse(
+            name,
+            durationMonths,
+            fee,
+            departmentId);
+
+        var existing = await repository.GetByIdAsync(id);
+
+        if (existing is null)
+            throw new ArgumentException(
+                "Course not found.");
+
+        existing.CourseName = name.Trim();
+        existing.DurationMonths = durationMonths;
+        existing.Fee = fee;
+        existing.DepartmentId = departmentId;
+
+        await repository.UpdateAsync(existing);
+    }
+
+    public async Task DeactivateAsync(int id)
+    {
+        var existing = await repository.GetByIdAsync(id);
+
+        if (existing is null)
+            throw new ArgumentException(
+                "Course not found.");
+
+        await repository.DeactivateAsync(id);
+    }
+
+    private static void ValidateCourse(
+        string name,
+        int durationMonths,
+        decimal fee,
+        int departmentId)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ArgumentException(
+                "Course name is required.");
+
+        if (durationMonths <= 0)
+            throw new ArgumentException(
+                "Duration must be greater than 0.");
+
+        if (fee < 0)
+            throw new ArgumentException(
+                "Fee cannot be negative.");
+
+        if (departmentId <= 0)
+            throw new ArgumentException(
+                "Invalid department ID.");
     }
 }

@@ -9,4 +9,10 @@ public class Student
     public string Email { get; set; } = string.Empty;
 
     public int Age { get; set; }
+
+    public int DepartmentId { get; set; }
+
+    public DateTime AdmissionDate { get; set; }
+
+    public bool IsActive { get; set; }
 }

@@ -58,3 +58,4 @@ C:\Users\Admin\source\repos\StudentCourseManagement\StudentCourseManagement\obj\
 C:\Users\Admin\source\repos\StudentCourseManagement\StudentCourseManagement\obj\Debug\net10.0\StudentCourseManagement.pdb
 C:\Users\Admin\source\repos\StudentCourseManagement\StudentCourseManagement\obj\Debug\net10.0\StudentCourseManagement.genruntimeconfig.cache
 C:\Users\Admin\source\repos\StudentCourseManagement\StudentCourseManagement\obj\Debug\net10.0\ref\StudentCourseManagement.dll
+C:\Users\Admin\source\repos\StudentCourseManagement\StudentCourseManagement\obj\Debug\net10.0\StudentCourseManagement.sourcelink.json
